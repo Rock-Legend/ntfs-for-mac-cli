@@ -1,0 +1,12 @@
+#!/bin/bash
+# NTFS Mate 启动入口
+set -euo pipefail
+cd "$(dirname "$0")"
+
+if [ ! -x .venv/bin/python ]; then
+    echo "[错误] 未找到 .venv，请先运行 ./install.sh 完成安装。" >&2
+    exit 1
+fi
+
+export PYTHONPATH=src
+exec .venv/bin/python -m ntfs_tui "$@"
