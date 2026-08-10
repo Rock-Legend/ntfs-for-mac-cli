@@ -66,7 +66,7 @@ else
   rm -f "$FORMULA.bak"
 fi
 
-echo "已更新 $FORMULA，提交并推送…"
+echo "已更新 ${FORMULA}，提交并推送…"
 git add "$FORMULA"
 git commit -m "build(formula): 回填 v${VERSION} 的 sha256"
 git push

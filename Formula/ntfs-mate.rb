@@ -17,7 +17,7 @@ class NtfsMate < Formula
   homepage "https://github.com/Rock-Legend/ntfs-for-mac-cli"
   url "https://github.com/Rock-Legend/ntfs-for-mac-cli/archive/refs/tags/v0.3.0.tar.gz"
   # 发布后执行 `./scripts/release-formula.sh` 自动下载 tag tarball 并回填真实 sha256。
-  sha256 "0000000000000000000000000000000000000000000000000000000000000000"
+  sha256 "0eecbe75edbc5850c20ff3cc1217116eecac99f07754888e214cd69c301a3b2c"
   license "MIT"
 
   depends_on "python@3.13"
