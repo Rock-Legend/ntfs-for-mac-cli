@@ -26,7 +26,13 @@ brew tap jonegao/ntfs-for-mac-cli
 brew install ntfs-mate
 ```
 
-formula 会自动拉取 macFUSE（cask）与 `gromgit/fuse/ntfs-3g-mac`，并把 `ntfs-mate` 注册到 `$(brew --prefix)/bin`。
+formula 会自动拉取 `gromgit/fuse/ntfs-3g-mac` 并把 `ntfs-mate` 注册到 `$(brew --prefix)/bin`。
+
+> ⚠️ **macFUSE 需单独安装**（新版 Homebrew 不允许 formula 声明 cask 依赖）：
+> ```bash
+> brew install --cask macfuse
+> ```
+> 安装前请先确保已授权其内核扩展（见下方"首次使用"提示）。未装 macFUSE 时公式会在构建前明确报错并给出安装指引。
 
 ### 方式二：安装脚本
 
