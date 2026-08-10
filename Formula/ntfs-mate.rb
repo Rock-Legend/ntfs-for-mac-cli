@@ -4,10 +4,13 @@
 #
 # 用法（本仓库自带 Formula 目录）：
 #   本地安装：  brew install --formula ./Formula/ntfs-mate.rb
-#   作为 tap：  brew tap Rock-Legend/ntfs-for-mac-cli && brew install ntfs-mate
+#   作为 tap：  brew tap Rock-Legend/ntfs-for-mac-cli https://github.com/Rock-Legend/ntfs-for-mac-cli.git \
+#               && brew trust rock-legend/ntfs-for-mac-cli && brew install ntfs-mate
 #
 # 说明：
-#   - macFUSE 只能走官方 cask（gromgit 没有 macfuse formula），formula 会自动拉取。
+#   - macFUSE 只能走官方 cask（gromgit 没有 macfuse formula），需用户先单独安装：
+#       brew install --cask macfuse
+#     未安装时 formula 在构建前会明确报错并给出安装指引。
 #   - ntfs-3g-mac 来自 gromgit/homebrew-fuse，brew 会自动 tap gromgit/fuse。
 #   - 两者下载/编译均来自 GitHub / tuxera / ghcr.io，国内若超时请先为 brew 配置代理：
 #       export HOMEBREW_HTTPS_PROXY=http://127.0.0.1:7897

@@ -21,8 +21,9 @@ macOS 上的 NTFS 硬盘读写工具 — 终端可视化（TUI）界面，让 NT
 # 本仓库已自带 Formula，可直接本地安装：
 brew install --formula ./Formula/ntfs-mate.rb
 
-# 或作为 tap 安装（先 tap 本仓库）：
-brew tap jonegao/ntfs-for-mac-cli
+# 或作为 tap 安装（公式在主仓库，需显式指定 git URL，否则 homebrew 默认找 homebrew-* 仓库会 404）：
+brew tap Rock-Legend/ntfs-for-mac-cli https://github.com/Rock-Legend/ntfs-for-mac-cli.git
+brew trust rock-legend/ntfs-for-mac-cli
 brew install ntfs-mate
 ```
 
