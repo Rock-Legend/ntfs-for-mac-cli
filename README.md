@@ -15,47 +15,74 @@ macOS 上的 NTFS 硬盘读写工具 — 终端可视化（TUI）界面，让 NT
 
 ## 安装
 
-### 方式一：Homebrew（推荐，一条命令装全）
+> 两种安装方式，按「是否需要下载源码」选择：
+> - **方式一（推荐）**：通过 Homebrew 安装，**不需要下载本仓库代码**，终端任意目录一条命令搞定。
+> - **方式二**：从本仓库源码安装，**需要先把仓库克隆到本地**，适合想本地改代码的开发者。
+
+### 方式一：Homebrew 安装（推荐，无需下载代码）
+
+ntfs-mate 依赖 **macFUSE** 内核框架才能读写 NTFS，请**先把它装好再继续**（否则下一步 `brew install ntfs-mate` 会直接报错退出）。无需克隆仓库，在终端**任意目录**执行：
+
+**① 安装底层依赖 macFUSE（必装，否则装不了 ntfs-mate）**
 
 ```bash
-# 本仓库已自带 Formula，可直接本地安装：
-brew install --formula ./Formula/ntfs-mate.rb
+brew install --cask macfuse
+```
 
-# 或作为 tap 安装（公式在主仓库，需显式指定 git URL，否则 homebrew 默认找 homebrew-* 仓库会 404）：
+> 装完还需在系统设置里批准其内核扩展（见文末"首次使用必读"），建议现在就做——它要重启一次，早点弄完不耽误后面用。
+
+**② 安装 ntfs-mate**
+
+```bash
+# 添加 tap（公式在主仓库，需显式指定 git URL，否则 Homebrew 默认找 homebrew-* 仓库会 404）
 brew tap Rock-Legend/ntfs-for-mac-cli https://github.com/Rock-Legend/ntfs-for-mac-cli.git
+
+# 信任该 tap（来自非官方 tap 的公式需先信任，否则 brew 拒绝安装）
 brew trust rock-legend/ntfs-for-mac-cli
+
+# 安装（自动拉取 gromgit/fuse/ntfs-3g-mac 并注册到 $(brew --prefix)/bin）
 brew install ntfs-mate
 ```
 
-formula 会自动拉取 `gromgit/fuse/ntfs-3g-mac` 并把 `ntfs-mate` 注册到 `$(brew --prefix)/bin`。
+### 方式二：从源码本地安装（需先克隆仓库）
 
-> ⚠️ **macFUSE 需单独安装**（新版 Homebrew 不允许 formula 声明 cask 依赖）：
-> ```bash
-> brew install --cask macfuse
-> ```
-> 安装前请先确保已授权其内核扩展（见下方"首次使用"提示）。未装 macFUSE 时公式会在构建前明确报错并给出安装指引。
+适合想本地修改代码的开发者。先克隆并进入仓库：
 
-### 方式二：安装脚本
+```bash
+git clone https://github.com/Rock-Legend/ntfs-for-mac-cli.git
+cd ntfs-for-mac-cli
+```
+
+然后在仓库目录内任选一种：
+
+**A. 用仓库自带的 Formula 安装**
+
+```bash
+brew install --formula ./Formula/ntfs-mate.rb
+```
+
+**B. 用安装脚本一键装齐（推荐本地开发）**
 
 ```bash
 ./install.sh
 ```
 
-标准 CLI 安装（遵循 Homebrew 目录惯例），脚本自动完成：
+脚本自动完成：
 
-1. `brew install --cask macfuse`（NTFS 内核驱动框架）
+1. `brew install --cask macfuse`（NTFS 内核驱动框架；方式一需你手动装，这里自动装）
 2. `brew install gromgit/fuse/ntfs-3g-mac`（NTFS 读写驱动）
 3. 从源码构建 wheel，装入独立运行环境 `$(brew --prefix)/opt/ntfs-mate/`
 4. 注册全局命令 `$(brew --prefix)/bin/ntfs-mate`
 
-**安装完成后本源码目录即可删除**，应用与源码完全无关。
+> ✅ **安装完成后本仓库目录即可删除**，应用与源码完全无关。
 
-> ⚠️ **首次使用 macFUSE 需要授权内核扩展**：
-> 系统设置 → 隐私与安全性 → 允许 "macFUSE"（Benjamin Fleischer），按提示重启一次（仅首次）。
->
+### 首次使用必读（两种方式都适用）
+
+> ⚠️ **macFUSE 需授权内核扩展（仅首次）**：
+> 系统设置 → 隐私与安全性 → 允许 "macFUSE"（Benjamin Fleischer），按提示重启一次。
 > Apple Silicon 机型还需先在恢复模式中允许第三方内核扩展（降低安全策略一次）。
 
-> 🌐 **GitHub 网络超时（国内常见）**：macFUSE / ntfs-3g 的下载与编译都来自 GitHub / tuxera / ghcr.io，直连极易超时。请先为 brew 配置代理再安装：
+> 🌐 **GitHub 网络超时（国内常见）**：macFUSE / ntfs-3g 的下载与编译都来自 GitHub / tuxera / ghcr.io，直连极易超时。请先为 brew 配置代理：
 > ```bash
 > export HOMEBREW_HTTPS_PROXY=http://127.0.0.1:7897
 > export HOMEBREW_HTTP_PROXY=http://127.0.0.1:7897
@@ -64,11 +91,29 @@ formula 会自动拉取 `gromgit/fuse/ntfs-3g-mac` 并把 `ntfs-mate` 注册到 
 
 ## 卸载
 
+### 仅卸载 ntfs-mate（保留驱动）
+
 ```bash
 ntfs-mate uninstall
 ```
 
-交互确认后移除全局命令与应用本体（`$(brew --prefix)/opt/ntfs-mate`），保留 macFUSE/ntfs-3g 驱动。源码目录还在的话也可运行 `./uninstall.sh`。
+交互确认后移除全局命令与应用本体（`$(brew --prefix)/opt/ntfs-mate`），**保留 macFUSE / ntfs-3g 驱动**（以后重装 ntfs-mate 不必再装驱动）。源码目录还在也可运行 `./uninstall.sh`。
+
+### 完整卸载（含 macFUSE / ntfs-3g）
+
+如果不再需要 NTFS 读写，可一并清掉底层驱动：
+
+```bash
+./uninstall.sh --all
+```
+
+脚本会依次卸载 ntfs-mate、ntfs-3g-mac、macFUSE。macFUSE 的内核扩展需**重启一次**才会完全卸除。
+
+> 也可手动卸载驱动：
+> ```bash
+> brew uninstall ntfs-3g-mac
+> brew uninstall --cask macfuse
+> ```
 
 ## 使用
 
@@ -137,6 +182,6 @@ docs/               设计文档与实现计划
 
 ## 已知限制
 
-- ntfs-3g 为 FUSE 用户态驱动，大文件连续读写性能低于原生或商业驱动（Paragon/Tuxera）
+- ntfs-3g 为 FUSE 用户态驱动，大文件连续读写性能低于原生或商业驱动（Paragon/Tuxera）；本工具已默认开启 `big_writes` + `noatime` 缓解，大量小文件场景仍偏慢（每次操作有用户态往返开销）。极致性能可换 Tuxera NTFS 或 Paragon NTFS（内核态驱动）
 - Apple Silicon 需一次性降低安全策略以加载 macFUSE kext
 - 开启 Windows「快速启动」或处于休眠状态的盘需先处理（工具内会给出引导）

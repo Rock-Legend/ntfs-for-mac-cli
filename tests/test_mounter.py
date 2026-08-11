@@ -81,6 +81,8 @@ def test_build_mount_cmd_exact():
         "-o", "allow_other",
         "-o", "auto_xattr",
         "-o", "auto_cache",
+        "-o", "big_writes",
+        "-o", "noatime",
         "-o", "volname=MyPassport",
     ]
 

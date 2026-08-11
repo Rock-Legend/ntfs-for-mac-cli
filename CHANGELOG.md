@@ -2,6 +2,19 @@
 
 本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.3.1] - 2026-08-11
+
+### 新增
+- `uninstall.sh` 支持 `--all` 一键完整卸载：移除 ntfs-mate 本体后，依次卸载 `ntfs-3g-mac` 与 `macFUSE`（cask），并提示内核扩展需重启才完全卸除；默认（不带参数）仍只卸 ntfs-mate、保留驱动。
+
+### 优化
+- 挂载默认开启 `big_writes`（写请求 4KiB→1MiB）与 `noatime`（跳过访问时间回写），提升 ntfs-3g 大文件读写吞吐，缓解 FUSE 用户态往返开销。
+
+### 修正 / 文档
+- 重写「安装」章节，按陌生用户视角梳理：段首区分「无需下载代码（Homebrew）」与「需先克隆仓库（源码）」两条路径；Homebrew 方式将 macFUSE 前置为必装依赖步骤，避免中途因缺依赖报错；抽出共享的「首次使用必读」（内核扩展授权 + 代理）。
+- 修正 README 与 Formula 中遗留的 `jonegao` tap 名为正确的 `Rock-Legend`。
+- 「卸载」章节拆分为「仅卸载 ntfs-mate（保留驱动）」与「完整卸载（含 macFUSE / ntfs-3g）」，并给出手动卸载命令。
+
 ## [0.3.0] - 2026-08-09
 
 ### 新增

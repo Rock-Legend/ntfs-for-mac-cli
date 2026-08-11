@@ -203,7 +203,7 @@ sequenceDiagram
 
 ## 7. 版本与状态
 
-- 当前版本：**0.3.0**（语义化版本，单一数据源在 `pyproject.toml`）。
+- 当前版本：**0.3.1**（语义化版本，单一数据源在 `pyproject.toml`）。
 - 入口命令：`ntfs-mate`（全局）、`ntfs-mate -v`（版本）、`ntfs-mate -h`（帮助）。
 - 测试：35 个 pytest 用例全绿，覆盖 deps / disks / mounter / app 冒烟。
 - 版本基线：**v0.3.0**（遵循语义化版本，后续发布按 `vX.Y.Z` 打 tag；标签历史自本次托管重新起算，不再保留 v0.2.x 旧标签）。

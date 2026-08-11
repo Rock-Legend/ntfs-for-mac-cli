@@ -39,6 +39,8 @@ def build_mount_cmd(v: NtfsVolume, mp: str, extra: list[str] | None = None) -> l
         "-o", "allow_other",
         "-o", "auto_xattr",
         "-o", "auto_cache",
+        "-o", "big_writes",   # 写吞吐关键开关：单笔写请求从 4KiB 提到 1MiB，减少用户态往返
+        "-o", "noatime",      # 跳过访问时间回写，减少无谓元数据写（数据盘安全）
         "-o", f"volname={v.volume_name}",
     ]
     for opt in extra or []:
