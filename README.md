@@ -4,6 +4,12 @@ macOS 上的 NTFS 硬盘读写工具 — 终端可视化（TUI）界面，让 NT
 
 ![macOS](https://img.shields.io/badge/macOS-Intel%20%7C%20Apple%20Silicon-blue)
 
+## 界面预览
+
+![NTFS Mate 主界面](src/assets/tui-main.png)
+
+主界面实时列出所有 NTFS 磁盘，显示卷名、设备、总容量 / 可用空间、挂载状态（未挂载 / 只读 / 读写）与挂载点，每 3 秒自动刷新；↑↓ 或鼠标选中磁盘后，即可通过快捷键进行读写挂载、卸载、弹出、访达打开等操作。
+
 ## 功能
 
 - **可视化磁盘列表**：卷名、设备、总容量/可用空间、挂载状态（未挂载/只读/读写）、挂载点，每 3 秒自动刷新（热插拔即时可见）
@@ -114,6 +120,7 @@ ntfs-mate uninstall
 > brew uninstall ntfs-3g-mac
 > brew uninstall --cask macfuse
 > ```
+
 
 ## 使用
 
