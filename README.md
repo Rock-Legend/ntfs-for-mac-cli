@@ -97,29 +97,41 @@ brew install --formula ./Formula/ntfs-mate.rb
 
 ## 卸载
 
-### 仅卸载 ntfs-mate（保留驱动）
+卸载命令取决于你当初的安装方式（见上方「安装」）。底层驱动 macFUSE / ntfs-3g-mac 始终由 Homebrew 管理，两种方式通用。
+
+### 仅卸载 ntfs-mate 应用（保留驱动）
+
+- **通过 Homebrew 安装（方式一 / 方式二-A）**：
+
+  ```bash
+  brew uninstall ntfs-mate
+  ```
+
+  > ⚠️ 不要对 brew 安装执行 `ntfs-mate uninstall`：该命令检测到 brew 安装会拒绝执行，并提示改用上面这条。
+
+- **通过 install.sh 手动安装（方式二-B）**：
+
+  ```bash
+  ntfs-mate uninstall        # 交互确认后移除全局命令与应用本体
+  # 或仓库目录下载到电脑本机中时：
+  ./uninstall.sh
+  ```
+
+### 完整卸载（连底层驱动一并移除）
+
+应用本体按安装方式选对应命令，底层驱动两种方式都通用（macFUSE 内核扩展需**重启一次**才完全卸除）：
 
 ```bash
-ntfs-mate uninstall
+# 1) 卸载应用本体（二选一，按安装方式）
+brew uninstall ntfs-mate          # 方式一 / 方式二-A（brew 安装）
+# ntfs-mate uninstall             # 方式二-B（install.sh 安装）；或 ./uninstall.sh
+
+# 2) 卸载底层驱动（两种方式通用）
+brew uninstall ntfs-3g-mac
+brew uninstall --cask macfuse
 ```
 
-交互确认后移除全局命令与应用本体（`$(brew --prefix)/opt/ntfs-mate`），**保留 macFUSE / ntfs-3g 驱动**（以后重装 ntfs-mate 不必再装驱动）。源码目录还在也可运行 `./uninstall.sh`。
-
-### 完整卸载（含 macFUSE / ntfs-3g）
-
-如果不再需要 NTFS 读写，可一并清掉底层驱动：
-
-```bash
-./uninstall.sh --all
-```
-
-脚本会依次卸载 ntfs-mate、ntfs-3g-mac、macFUSE。macFUSE 的内核扩展需**重启一次**才会完全卸除。
-
-> 也可手动卸载驱动：
-> ```bash
-> brew uninstall ntfs-3g-mac
-> brew uninstall --cask macfuse
-> ```
+如不再需要该 tap，最后执行：`brew untap Rock-Legend/ntfs-for-mac-cli`
 
 
 ## 使用
@@ -175,7 +187,7 @@ python3 -m venv .venv
 pyproject.toml      打包定义（版本/依赖/console_scripts/pytest 配置，单一数据源）
 Formula/ntfs-mate.rb Homebrew formula（brew install 一条命令装全）
 install.sh          一键安装到系统标准位置（原子替换，失败不留半成品，代理自适应+重试）
-uninstall.sh        卸载（与 ntfs-mate uninstall 等效）
+uninstall.sh        卸载脚本（仅适用于 install.sh 安装，与 ntfs-mate uninstall 等效；brew 安装请用 brew uninstall ntfs-mate）
 ntfs-mate           开发期启动入口（项目内 .venv）
 LICENSE / CHANGELOG.md
 src/ntfs_tui/
