@@ -45,10 +45,9 @@ class NtfsMate < Formula
     # 从源码构建并安装本包（pip 会从 PyPI 拉取 textual 等依赖）
     system venv_pip, "install", buildpath/"."
 
-    (bin/"ntfs-mate").write_env_script(
-      venv/"bin/ntfs-mate",
-      PYTHONPATH => libexec/"lib/python3.13/site-packages",
-    )
+    # venv 自包含（已在上面 pip install 进 venv），控制台脚本的 shebang 指向 venv 的
+    # python，包天然可被导入，无需再设置 PYTHONPATH。
+    (bin/"ntfs-mate").write_env_script(venv/"bin/ntfs-mate", {})
   end
 
   def caveats
