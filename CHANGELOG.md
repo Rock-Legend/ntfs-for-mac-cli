@@ -2,6 +2,19 @@
 
 本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.3.4] - 2026-08-14
+
+### 修复（兼容性）
+
+- `mounter.py`：`sudo ntfs-3g` 改为 `shutil.which("ntfs-3g")` 解析**绝对路径**再传给 sudo。修复 Apple Silicon 上 macOS 默认 `sudo` 的 `secure_path` 不含 `/opt/homebrew/bin` 导致"依赖检测通过却挂载失败"的问题；Intel 路径同样稳健。
+- `mounter.py`：`mount_ro` 改为读取 `diskutil mount readOnly` 的真实 `MountPoint`，不再硬编码 `/Volumes/<卷名>`（卷名含特殊字符或重名时指向错误目录）。
+- `__init__.py`：`__version__` 改为运行时读 `importlib.metadata`，以 `pyproject.toml` 为版本唯一数据源（原写死 0.3.1 会与实际版本错位）。
+- `Formula/ntfs-mate.rb`：macFUSE 存在性检测同时检查 `#{HOMEBREW_PREFIX}/include/fuse.h`，兼容 Apple Silicon 的 `/opt/homebrew` 前缀（原硬编码 `/usr/local`）。
+
+### 文档
+
+- README 新增「支持环境」章节：声明 Intel/Apple Silicon 双架构支持、macOS 11+ 版本下限（已在 26.1 Tahoe 验证）、安装位置自适应，并说明应用本体纯 Python、平台差异全来自 macFUSE/ntfs-3g 内核驱动。
+
 ## [0.3.3] - 2026-08-14
 
 ### 修复

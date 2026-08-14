@@ -19,6 +19,14 @@ macOS 上的 NTFS 硬盘读写工具 — 终端可视化（TUI）界面，让 NT
 - **一键安装**：`install.sh` 自动装齐全部依赖（含代理自适应与重试）
 - **Homebrew 安装**：支持 `brew install ntfs-mate`，一条命令装全
 
+## 支持环境
+
+- **CPU 架构**：Intel（x86_64）与 Apple Silicon（arm64）均支持，无需区分。Apple Silicon 机型**首次**需进入恢复模式、将安全策略降为「降低安全性 / 允许用户管理内核扩展」一次，才能加载 macFUSE 内核扩展（之后正常使用）。
+- **macOS 版本**：macOS 11 Big Sur 及以上（已在 macOS 26.1 Tahoe 上验证）。底层依赖 macFUSE 内核扩展本身支持 macOS 10.9+；Sequoia 15 / Tahoe 26 等较新系统在「系统设置 → 隐私与安全性」中需手动允许 macFUSE 内核扩展（仅首次）。
+- **安装位置自适应**：无论 Intel（`/usr/local`）还是 Apple Silicon（`/opt/homebrew`），脚本与 formula 均通过 `brew --prefix` 自动适配，用户无需手动区分路径。
+
+> 说明：本工具的应用本体为纯 Python（≥3.9）+ Textual，**本身不绑定特定 macOS 版本或 CPU 架构**；所有平台差异都来自底层 macFUSE / ntfs-3g 内核驱动，由 Homebrew 统一处理。
+
 ## 安装
 
 > 两种安装方式，按「是否需要下载源码」选择：

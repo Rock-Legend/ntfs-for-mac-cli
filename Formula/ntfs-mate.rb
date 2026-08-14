@@ -30,7 +30,9 @@ class NtfsMate < Formula
   # macFUSE 是 cask（内核扩展），新版 Homebrew 不允许在 formula 里声明 cask 依赖，
   # 这里在构建前做存在性校验，缺失则给出清晰的安装指引。
   def install
-    unless File.exist?("/usr/local/include/fuse.h")
+    # macFUSE 官方 pkg 固定装到 /usr/local，但为兼容 Homebrew 前缀非默认的情况
+    # （如 Apple Silicon 的 /opt/homebrew），同时检查 HOMEBREW_PREFIX/include。
+    unless File.exist?("/usr/local/include/fuse.h") || File.exist?("#{HOMEBREW_PREFIX}/include/fuse.h")
       odie "未检测到 macFUSE，请先安装其内核扩展：\n" \
            "    brew install --cask macfuse\n" \
            "并在「系统设置 → 隐私与安全性」中允许 macFUSE（仅首次需重启）。"

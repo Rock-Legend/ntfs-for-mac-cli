@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import os
+import plistlib
+import shutil
 import subprocess
 
 from .disks import NtfsVolume
@@ -32,9 +34,14 @@ def mount_point_for(v: NtfsVolume, existing: set | None = None) -> str:
 
 
 def build_mount_cmd(v: NtfsVolume, mp: str, extra: list[str] | None = None) -> list[str]:
+    # 用绝对路径调用 ntfs-3g：macOS 默认 sudo 的 secure_path 不含
+    # /opt/homebrew/bin（Apple Silicon 的 Homebrew 位置），直接写 "ntfs-3g"
+    # 会在 sudo 子进程里找不到命令；用 which 在用户 PATH 解析后传绝对路径即可
+    # 跨 Intel/Apple Silicon 都稳健（Intel 上会解析到 /usr/local/bin/ntfs-3g）。
+    ntfs_3g_bin = shutil.which("ntfs-3g") or "ntfs-3g"
     cmd = [
         "sudo", "-S", "-p", "",
-        "ntfs-3g", v.device, mp,
+        ntfs_3g_bin, v.device, mp,
         "-o", "local",
         "-o", "allow_other",
         "-o", "auto_xattr",
@@ -122,8 +129,21 @@ def mount_rw(
 
 
 def mount_ro(v: NtfsVolume, run=subprocess.run) -> str:
-    """只读挂载（macOS 原生驱动）。"""
+    """只读挂载（macOS 原生驱动），返回真实挂载点。
+
+    diskutil 实际挂载路径可能与 /Volumes/<卷名> 不同（卷名含特殊字符、
+    重名、或系统已挂载到别处），此处从 diskutil 输出读取真实 MountPoint，
+    避免后续「访达打开」指向错误目录。
+    """
     _check(run(["diskutil", "mount", "readOnly", v.device], capture_output=True), "只读挂载")
+    info = run(["diskutil", "info", "-plist", v.device], capture_output=True)
+    if info.returncode == 0:
+        try:
+            mp = plistlib.loads(info.stdout).get("MountPoint")
+            if mp:
+                return mp
+        except Exception:
+            pass
     return f"/Volumes/{v.volume_name}"
 
 
