@@ -18,9 +18,9 @@
 class NtfsMate < Formula
   desc "macOS NTFS read/write TUI tool (macFUSE + ntfs-3g)"
   homepage "https://github.com/Rock-Legend/ntfs-for-mac-cli"
-  url "https://github.com/Rock-Legend/ntfs-for-mac-cli/archive/refs/tags/v0.3.3.tar.gz"
+  url "https://github.com/Rock-Legend/ntfs-for-mac-cli/archive/refs/tags/v0.3.4.tar.gz"
   # 发布后执行 `./scripts/release-formula.sh` 自动下载 tag tarball 并回填真实 sha256。
-  sha256 "6efe236fd1a694f3c3cf7bc5644d37ea6eacf1ebbc19bd1716f44f1ee5121161"
+  sha256 "c4570f737322f65660be329e7ada4927af05884de3de53492b302f017eb13cb4"
   license "MIT"
 
   depends_on "python@3.13"
