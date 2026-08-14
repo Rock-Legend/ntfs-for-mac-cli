@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ntfs-mate"
-version = "0.3.2"
+version = "0.3.3"
 description = "macOS NTFS 硬盘读写 TUI 工具（macFUSE + ntfs-3g）"
 readme = "README.md"
 requires-python = ">=3.9"

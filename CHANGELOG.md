@@ -2,6 +2,15 @@
 
 本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.3.3] - 2026-08-14
+
+### 修复
+
+- `ntfs-mate uninstall` 在 Homebrew 安装下误报"源码/开发环境运行"的真正根因修复（此前 0.3.3 的修复未生效）：
+  - 移除 `Path(sys.executable).resolve()`：venv 内 python 是软链，指向 base interpreter，resolve 会破坏 "…/venv" 布局假设，使 `_install_prefix` 直接返回 None。
+  - 修正 Homebrew 路径层级：Cellar 布局为 `<Cellar>/ntfs-mate/<version>/libexec/venv`，`ntfs-mate` 在 venv 上 3 层（中间隔着版本目录），原代码按下 2 层判断永远不成立。
+  - 现检测到 Homebrew 管理（路径落在 Cellar 内或 `opt` 下为软链）时，明确提示改用 `brew uninstall ntfs-mate`，不再误删 brew keg。
+
 ## [0.3.2] - 2026-08-14
 
 ### 修正

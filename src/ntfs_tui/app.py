@@ -495,18 +495,42 @@ USAGE = """ntfs-mate — macOS NTFS 硬盘读写 TUI 工具
   ntfs-mate                 启动 TUI
   ntfs-mate -v, --version   显示版本与驱动状态
   ntfs-mate -h, --help      显示本帮助
-  ntfs-mate uninstall       卸载本工具（移除全局命令与应用本体，保留驱动）
+  ntfs-mate uninstall       卸载本工具（移除全局命令与应用本体，保留驱动）；Homebrew 安装请用 `brew uninstall ntfs-mate`
 """
 
 
-def _install_paths() -> tuple[Path, Path] | None:
-    """定位系统安装位置；源码/开发环境运行（不在 opt/ntfs-mate 下）时返回 None。"""
-    venv = Path(sys.executable).resolve().parent.parent
-    app_dir = venv.parent
-    if app_dir.name != "ntfs-mate" or app_dir.parent.name != "opt":
+def _install_prefix() -> Path | None:
+    """定位系统安装根目录（含 ntfs-mate 的那一级 keg / 安装目录）。
+
+    支持两种布局：
+      - 手动/系统安装：<prefix>/ntfs-mate/venv/bin/python
+      - Homebrew：    <Cellar>/ntfs-mate/<version>/libexec/venv/bin/python
+    源码/开发环境运行（都不匹配）时返回 None。
+
+    注意：不得使用 Path(sys.executable).resolve()。venv 内的 python 是软链，
+    指向 base interpreter（如 /usr/local/Cellar/python@3.13/...），resolve 会
+    破坏 "…/venv" 布局假设；直接用 sys.executable 的目录向上回溯即可。
+    """
+    venv = Path(sys.executable).parent.parent  # .../venv（不 resolve，保留软链目录）
+    if venv.name != "venv":
         return None
-    bin_link = app_dir.parent.parent / "bin" / "ntfs-mate"
-    return app_dir, bin_link
+    # 手动安装：venv 直接挂在 ntfs-mate 下
+    if venv.parent.name == "ntfs-mate":
+        return venv.parent
+    # Homebrew：venv 在 libexec 下，再往上是 <version>/ntfs-mate
+    if venv.parent.name == "libexec":
+        gp = venv.parent.parent.parent  # 跳过 <version> 目录，应为 ntfs-mate
+        if gp.name == "ntfs-mate":
+            return venv.parent.parent  # 返回 versioned keg 目录
+    return None
+
+
+def _is_brew_install(prefix: Path) -> bool:
+    """是否由 Homebrew 管理（路径落在 Cellar 内，或 opt 下为软链）。"""
+    resolved = prefix.resolve()
+    if "Cellar" in resolved.parts:
+        return True
+    return prefix.parent.name == "opt" and prefix.is_symlink()
 
 
 def self_uninstall(app_dir: Path, bin_link: Path, confirm=input) -> bool:
@@ -539,11 +563,16 @@ def main() -> None:
         print(USAGE)
         return
     if arg == "uninstall":
-        paths = _install_paths()
-        if paths is None:
+        prefix = _install_prefix()
+        if prefix is None:
             print("当前为源码/开发环境运行，未检测到系统安装，无需卸载。", file=sys.stderr)
             sys.exit(1)
-        self_uninstall(*paths)
+        if _is_brew_install(prefix):
+            print("检测到通过 Homebrew 安装，请勿用本命令卸载，请改用：", file=sys.stderr)
+            print("    brew uninstall ntfs-mate", file=sys.stderr)
+            sys.exit(1)
+        bin_link = prefix.parent.parent / "bin" / "ntfs-mate"
+        self_uninstall(prefix, bin_link)
         return
     print(f"ntfs-mate: 未知参数 '{arg}'\n", file=sys.stderr)
     print(USAGE, file=sys.stderr)
