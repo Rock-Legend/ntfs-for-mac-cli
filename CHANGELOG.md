@@ -2,6 +2,11 @@
 
 本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.3.2] - 2026-08-14
+
+### 修正
+- 修复 Homebrew formula 安装报错：`write_env_script` 误将 `PYTHONPATH` 作为 Ruby 常量引用（应为字符串 env 键），导致 `brew install` 在构建后抛 `NameError: uninitialized constant ... NtfsMate::PYTHONPATH`。venv 自包含、包天然可导入，已移除多余的 `PYTHONPATH` 设置，安装恢复正常。
+
 ## [0.3.1] - 2026-08-11
 
 ### 新增
